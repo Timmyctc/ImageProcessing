@@ -9,9 +9,8 @@ import javax.imageio.ImageIO;
 public class Menu {
 	//Scanner obj to be used for various user inputs
 	private final static Scanner sc = new Scanner(System.in);
+	public static Kernel k = Kernel.BOX_BLUR.LAPLACIAN;
 	
-	//In-use kernel (Can be set and reset by user)
-	static Kernel k = null;
 	
 	//Set Of all Enums
 	public static EnumSet<Kernel> kernelSet = EnumSet.allOf(Kernel.class);
