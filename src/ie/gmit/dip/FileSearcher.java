@@ -12,9 +12,14 @@ public class FileSearcher {
 	//Public Method facilitating user input of File and Directory(Checks if they exist, delegates to FindFile method)
 	public static String enterFile() throws Exception {
 		
+		System.out.println(ConsoleColour.BLUE);
 		System.out.println("Enter File Name");
+		System.out.println(ConsoleColour.RESET);
 		String fileName = sc.next() + extension;
+		System.out.println(ConsoleColour.BLUE);
 		System.out.println("Enter Directory Path to Search");
+		System.out.println(ConsoleColour.RESET);
+
 		String directory = sc.next();
 		try {
 			File target = new File(findFile(fileName, directory));	//Delegate to findFile method for retrieval if file exists

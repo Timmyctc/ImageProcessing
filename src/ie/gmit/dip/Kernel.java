@@ -2,12 +2,8 @@ package ie.gmit.dip;
 
 
 public enum Kernel {
-	
-	IDENTITY(new  double[][] {
-			{0, 0, 0},
-			{0, 1, 0},
-			{0, 0, 0}
-	}),
+
+	IDENTITY(new double[][] { { 0, 0, 0 }, { 0, 1, 0 }, { 0, 0, 0 } }),
 
 	EDGE_DETECTION_1(new double[][]  {
 			{-1, -1, -1},
@@ -77,13 +73,20 @@ public enum Kernel {
 			{-1, 0, 1}
 	}),;
 
-	Kernel(double[][] ds) {
-		// TODO Auto-generated constructor stub
+	private double[][] kernels;
+	
+	Kernel(double[][] k) {
+		this.setKernels(k);
 	}
 
+	public double[][] getKernels() {
+		return kernels;
+	}
 
-	 
- 
+	public void setKernels(double[][] kernels) {
+		this.kernels = kernels;
+	}
+
 }
 
 /*

@@ -24,7 +24,6 @@ public class Menu {
 			displayOptions();
 			System.out.println(ConsoleColour.RESET);			
 			int choice = getInput();
-			
 			switch (choice) {
 			case 1:	
 				try {
@@ -36,26 +35,54 @@ public class Menu {
 				}
 				break;
 			case 2:
+				System.out.println(ConsoleColour.BLUE);
 				kernelSet.forEach(System.out::println);
+				System.out.println(ConsoleColour.RESET);
 				break;
 			case 3:
-				System.out.println("Enter the name of the filter you wish to use (Not case sensitive)");
-				String s = getStringInput();
-				try {
-					setKernel(s);
-				} catch (Exception e) {
-					System.out.println("Not a Valid Filter, Try Again");
+				boolean set = false;
+				
+				String s;
+
+				do {
+					System.out.println(ConsoleColour.BLUE);
+					System.out.println("Enter the name of the filter you wish to use (Not case sensitive)");
+					System.out.println(ConsoleColour.RESET);
+					s = getStringInput();
+					try {
+						setKernel(s);
+						set = true;
+					} catch (Exception e) {
+						System.out.println(ConsoleColour.RED);
+						System.out.println("Not a Valid Filter, Try Again");
+						System.out.println(ConsoleColour.RESET);
+						set = false;
+					} 
+				} while (!set);
+				if (set) {
+					System.out.println(ConsoleColour.BLUE);
+					System.out.println("Confirmed: Current Filter is Now " + s);
+					System.out.println(ConsoleColour.RESET);
+					System.out.println();
 				}
 				break;
 			case 4:
+				System.out.println(ConsoleColour.BLUE);
 				System.out.println("Coming Soon");
+				System.out.println(ConsoleColour.RESET);
 				//Does Something Eventually
 				break;
 			case 5:	
 				if(k != null) {
+					System.out.println(ConsoleColour.BLUE);
 				System.out.println("Current Kernel is " + k.toString());
+				System.out.println(ConsoleColour.RESET);
 				}
-				else System.out.println("Select A Filter First");
+				else if(k == null) {
+					System.out.println(ConsoleColour.RED); 
+					System.out.println("Select A Filter First");
+					System.out.println(ConsoleColour.RESET);
+				}
 				break;
 			case 6:
 				System.out.println(ConsoleColour.RED);
@@ -69,7 +96,6 @@ public class Menu {
 				System.out.println(ConsoleColour.RESET);
 			}
 		} while (loop);
-		sc.close();
 	}//End Display Menu
 
 	 //Aesthetic Method to display menu options
@@ -105,15 +131,18 @@ public class Menu {
 		int choice = -1;
 			try {
 				choice = Integer.parseInt(sc.nextLine());
-			} catch (NumberFormatException e) {
+			} catch (Exception e) {
 				//System.out.println("Not a valid input, Select a Valid Input");
 			}	
+			
 		return choice;
 	}//End GetInput Method
 
 	//Utility Method to get String Input from User (Choosing Kernel)
 	private static String getStringInput() {
+		Scanner sc = new Scanner(System.in);
 		String s = sc.nextLine().toUpperCase();
+		//sc.close();
 		return s;
 		}	
 	
