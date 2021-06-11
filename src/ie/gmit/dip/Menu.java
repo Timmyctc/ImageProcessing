@@ -7,9 +7,13 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 public class Menu {
-	//Scanner obj to be used for various user inputs
+	
+	//private static int customCount = 1;
+	//Scanner obj to be used for various user input
 	private final static Scanner sc = new Scanner(System.in);
-	public static Kernel k = Kernel.BOX_BLUR.LAPLACIAN;
+	
+	//Default value for Kernel
+	public static Kernel k = Kernel.HORIZONTAL_LINES;
 	
 	
 	//Set Of all Enums
@@ -27,11 +31,10 @@ public class Menu {
 			switch (choice) {
 			case 1:	
 				try {
-					BufferedImage image = ImageIO.read(new File(FileSearcher.enterFile()));
-					//System.out.println(image); This writes out a lot of useful meta-data about the image.
-					ImageProcess.readImage(image);
+					BufferedImage inputImage = ImageIO.read(new File(FileSearcher.enterFile()));
+					ImageProcess.readImage(inputImage, k);
 				} catch (Exception e) {
-					//something
+					e.printStackTrace();
 				}
 				break;
 			case 2:
@@ -67,9 +70,7 @@ public class Menu {
 				}
 				break;
 			case 4:
-				System.out.println(ConsoleColour.BLUE);
-				System.out.println("Coming Soon");
-				System.out.println(ConsoleColour.RESET);
+			//	createKernel();
 				//Does Something Eventually
 				break;
 			case 5:	
@@ -98,14 +99,14 @@ public class Menu {
 		} while (loop);
 	}//End Display Menu
 
-	 //Aesthetic Method to display menu options
+	//Aesthetic Method to display menu options
 	 private static void displayOptions() {
 		 System.out.println();
 		 System.out.println(ConsoleColour.BLACK);
 			System.out.println("1) Enter Image Name"); // Ask user to specify the file to process. 										
 			System.out.println("2) Display Available Filters"); // List the set of filters available in the class Kernel.java
 			System.out.println("3) Select A Filter"); 		//Select a Filter by typing the name (Not case sensitive)									
-			System.out.println("4) Does Nothing Yet"); // 
+			System.out.println("4) Add A Filter"); // 
 			System.out.println("5) Display Current Filter");
 			System.out.println("6) Quit");	//Terminate program
 			System.out.println("\nSelect Option [1-6]>");
@@ -128,21 +129,19 @@ public class Menu {
 
 	//utility method to get users menu choice input
 	private static int getInput() {
+		Scanner sc2 = new Scanner(System.in);
 		int choice = -1;
 			try {
-				choice = Integer.parseInt(sc.nextLine());
+				choice = Integer.parseInt(sc2.nextLine());
 			} catch (Exception e) {
-				//System.out.println("Not a valid input, Select a Valid Input");
-			}	
-			
+				// System.out.println("Not a valid input, Select a Valid Input");
+		}
 		return choice;
 	}//End GetInput Method
 
 	//Utility Method to get String Input from User (Choosing Kernel)
 	private static String getStringInput() {
-		Scanner sc = new Scanner(System.in);
 		String s = sc.nextLine().toUpperCase();
-		//sc.close();
 		return s;
 		}	
 	
@@ -150,4 +149,44 @@ public class Menu {
 	private static void setKernel(String s) {
 		k = Kernel.valueOf(s);
 	}
+	
+	 /*private static void createKernel() {
+		
+		 System.out.println(ConsoleColour.BLUE);
+		 System.out.println("What Size Filter:\n1) 3x3\n2) 5x5\n3) 9x9");
+		 System.out.println(ConsoleColour.RESET);
+		 int kernelSizeChoice = -1;
+		 int kernelSize = 0;
+			while (kernelSizeChoice <1 || kernelSizeChoice >3)
+			{
+				System.out.println(ConsoleColour.RED);
+				System.out.println("Not a valid Input, Select a valid Input");
+				System.out.println(ConsoleColour.RESET);
+				kernelSizeChoice = getInput();
+			}
+			switch(kernelSizeChoice) {
+			case 1: 
+				kernelSize = 3;
+				break;
+			case 2:
+				kernelSize = 5;
+				break;
+			case 3:
+				kernelSize = 9;
+				break;
+				
+				default: System.out.println("Not Good");				
+			}
+			System.out.println("Enter Values");
+			try (Scanner kScan = new Scanner(System.in)) {
+				double[][] newK = new double[kernelSize][kernelSize];
+				for(int i = 0; i<newK.length; i++) {
+					for(int j = 0; j<newK[i].length; j++) {
+						newK[i][j] = kScan.nextDouble();
+					}
+				}
+			}
+		}*/
+
+	
 }//End Class

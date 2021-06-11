@@ -11,34 +11,24 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 public class ImageProcess {
-//private final static Scanner sc = new Scanner(System.in);
+private final static Scanner sc = new Scanner(System.in);
 
 	//In-use kernel (Can be set and reset by user)
-		public static Kernel k = Kernel.LAPLACIAN;
+		public static Kernel k = Kernel.HORIZONTAL_LINES;
 		
 	// method reads in image
-	public static void readImage(BufferedImage inputImage) throws IOException {
+	public static void readImage(BufferedImage inputImage, Kernel kern) throws IOException {
+		k=kern;
 		writeImage(inputImage);
 	}// End Read Image Method
 
 	
-	//does nothing yet
-	void setKernel(String kernelChoice){
-		k = Kernel.valueOf(kernelChoice);
-	}//
-	
 	//Method to Write an Image Out
 		private static void writeImage(BufferedImage inputImage) throws IOException {
-			double[][] kernel = new double[][] //Kernel is hardcoded needs to be settable
-				{
-				{0, -1, 0},
-				{-1, 5, -1},
-				{0, -1, 0}
-				};
-				System.out.println("Debug:" + Math.negateExact(kernel.length/2));
-				System.out.println("Debug:" + kernel.length/2);
+				//System.out.println("Debug:" + Math.negateExact(k.getKernels().length/2));
+				//System.out.println("Debug:" + k.getKernels().length/2);
 				String outputFileName = getFileOutputName() + ".PNG";
-				BufferedImage outputImage = convolute(kernel,inputImage);	
+				BufferedImage outputImage = convolute(inputImage);	
 				
 				
 				
@@ -56,7 +46,7 @@ public class ImageProcess {
 	
 	
 	private static String getFileOutputName() {
-		Scanner sc = new Scanner(System.in);
+		//Scanner sc = new Scanner(System.in);
 		System.out.println(ConsoleColour.BLUE);
 		System.out.println("Enter File Name for Output:");
 		System.out.println(ConsoleColour.RESET);
@@ -72,7 +62,7 @@ public class ImageProcess {
 
 
 	//method to convolve
-	private static BufferedImage convolute(double[][]kernel, BufferedImage image) {
+	private static BufferedImage convolute(BufferedImage image) {
 		
 		//TODO rework to properly flag a RGB to GS output (Needs to be properly converted)
 		BufferedImage imageO = getImageChoice(image);
@@ -104,8 +94,8 @@ public class ImageProcess {
 					//The offset is added to the xCoord and yCoord to follow the footprint of the kernel 
 					 
 						try {
-							for ( int xOffset = Math.negateExact(kernel.length/2); xOffset <= kernel.length/2; xOffset++) {
-								for (int yOffset = Math.negateExact(kernel.length/2); yOffset <= kernel.length/2; yOffset++) {
+							for ( int xOffset = Math.negateExact(k.getKernels().length/2); xOffset <= k.getKernels().length/2; xOffset++) {
+								for (int yOffset = Math.negateExact(k.getKernels().length/2); yOffset <= k.getKernels().length/2; yOffset++) {
 									
 									int realX = (xCoord +  xOffset);
 									int realY = (yCoord +  yOffset);
@@ -122,10 +112,15 @@ public class ImageProcess {
 									 //blue +=  (B*kernel[yOffset +1][xOffset+1]);
 									 //alpha += (A*kernel[yOffset +1][xOffset+1]);
 									 
-									 red +=  (R*kernel[yOffset + kernel.length/2][xOffset +kernel.length/2]);
-									 green +=  (G*kernel[yOffset+ kernel.length/2][xOffset+kernel.length/2]);		//reverse
-									 blue +=  (B*kernel[yOffset +kernel.length/2][xOffset+kernel.length/2]);
-									 alpha += (A*kernel[yOffset +kernel.length/2][xOffset+kernel.length/2]);
+									 red+=  (R*k.getKernels()[yOffset + k.getKernels().length/2][xOffset +k.getKernels().length/2]);
+									 green +=  (G*k.getKernels()[yOffset+ k.getKernels().length/2][xOffset+k.getKernels().length/2]);		//reverse
+									 blue +=  (B*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2]);
+									 alpha += (A*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2]);
+									
+									//red +=  (R*kernel[yOffset + kernel.length/2][xOffset +kernel.length/2]);
+									//green +=  (G*kernel[yOffset+ kernel.length/2][xOffset+kernel.length/2]);		//reverse
+									//blue +=  (B*kernel[yOffset +kernel.length/2][xOffset+kernel.length/2]);
+									//alpha += (A*kernel[yOffset +kernel.length/2][xOffset+kernel.length/2]);
 								}
 							}
 						} catch (ArrayIndexOutOfBoundsException e) {
@@ -152,7 +147,7 @@ public class ImageProcess {
 	
 	//Allows user to choose output RGB or GS 
 	private static BufferedImage getImageChoice(BufferedImage image) {
-		Scanner sc = new Scanner(System.in);
+		//Scanner sc = new Scanner(System.in);
 		int currentType = image.getColorModel().getColorSpace().getType();
 		boolean grayscale = (currentType==ColorSpace.TYPE_GRAY || currentType==ColorSpace.CS_GRAY);
 		if(grayscale)
@@ -219,11 +214,11 @@ public class ImageProcess {
 
 /*	C:\Users\timmy\Desktop 
 {
-				{-0.00391, -0.01563, -0.02344, -0.01563, -0.00391},
-				{-0.01563, -0.06250, -0.09375, -0.06250, -0.01563},
-				{-0.02344, -0.09375, 1.85980, -0.09375, -0.02344},
-				{-0.01563, -0.06250, -0.09375, -0.06250, -0.01563},
-				{-0.00391, -0.01563, -0.02344, -0.01563, -0.00391}
+				{-2, -2, -2, -2, -2},
+				{-2, -1, -1, -1, -2},
+				{0, 0.5, 1, 0.5, -0},
+				{2, 1, 1, 1, 2},
+				{2, 2, 2, 2, 2}
 				};
 
 */
