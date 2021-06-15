@@ -74,7 +74,7 @@ public enum Kernel {
 	}),
 	 
 	 CUSTOM_1(new double[][] {
-		 {-2, -2, -2, -2, -2},
+		 	{-2, -2, -2, -2, -2},
 			{-2, -1, -1, -1, -2},
 			{0, 0.5, 1, 0.5, -0},
 			{2, 1, 1, 1, 2},
@@ -84,8 +84,12 @@ public enum Kernel {
 
 	private double[][] kernels;
 	
-	Kernel(double[][] k) {
-		this.setKernels(k);
+	//Kernel(double[][] k) {
+	//	this.setKernels(k);
+	//}
+	
+	Kernel(double[][] kernels) {
+		this.kernels = kernels;
 	}
 
 	public double[][] getKernels() {

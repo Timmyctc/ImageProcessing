@@ -12,21 +12,22 @@ public class FileSearcher {
 	//Public Method facilitating user input of File and Directory(Checks if they exist, delegates to FindFile method)
 	public static String enterFile() throws Exception {
 		
+		//Prompts and other bits
 		System.out.println(ConsoleColour.BLUE);
 		System.out.println("Enter File Name");
 		System.out.println(ConsoleColour.RESET);
-		String fileName = sc.next() + extension;
+		String fileName = sc.nextLine().trim() + extension;	//Get the file name, append the extension. 
 		System.out.println(ConsoleColour.BLUE);
 		System.out.println("Enter Directory Path to Search");
 		System.out.println(ConsoleColour.RESET);
 
-		String directory = sc.next();
+		String directory = sc.nextLine().trim();	//Get directory path
 		try {
 			File target = new File(findFile(fileName, directory));	//Delegate to findFile method for retrieval if file exists
 			return target.getAbsolutePath();
 		} catch (Exception e) {
 			System.out.println(ConsoleColour.RED);
-			System.out.println("No Such File Found!");
+			System.out.println("No Such File Found!");	//If file or Directory is incorrect.
 			System.out.println(ConsoleColour.RESET);
 		}
 		return null;
