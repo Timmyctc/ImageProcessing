@@ -11,11 +11,15 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 public class ImageProcess {
-private final static Scanner sc = new Scanner(System.in);
+private static Scanner sc = new Scanner(System.in);
 
 	//In-use kernel (Can be set and reset by user)
 		public static Kernel k;
-		
+		private static double bias = 0.0d;
+		private static double multiFactor = 1;
+	
+
+
 	// method reads in image
 	public static void readImage(BufferedImage inputImage, Kernel kern) throws IOException {
 		k=kern;
@@ -49,19 +53,26 @@ private final static Scanner sc = new Scanner(System.in);
 			System.out.println("Enter Output directory, leave blank for default output to project folder.");
 			System.out.println(ConsoleColour.RESET);
 			String outputDirectory = sc1.nextLine().trim();
+			String delimiter = FileSearcher.getOS();
 			
-			//Check if the Output Directory Provided by the User exists, If it doesn't  only return the output File Name and we'll output to default project folder
+			// Check if the Output Directory Provided by the User exists, If it doesn't only
+			// return the output File Name and we'll output to default project folder
 			File f = new File(outputDirectory);
-			if(!(f).exists()) return outputPictureName;
-			 return outputDirectory + "\\" + outputPictureName;					//this line may cause incompatibility in linux systems due to backslashess
-			}	
+			if (!(f).exists()) {
+				System.out.println(ConsoleColour.RED);
+				System.out.println("Error, Directory not found: Outputting to Default Project Folder");
+				System.out.println(ConsoleColour.RESET);
+				return outputPictureName;
+			} else {
+				return outputDirectory + delimiter + outputPictureName; // this line may cause incompatibility in linux
+																	// systems due to backslashess TODO
+			}
+
+		}
 
 	//method to convolve
-	private static BufferedImage convolute(BufferedImage image) {
-		
-		
+	private static BufferedImage convolute(BufferedImage image) {	
 		BufferedImage imageO = getImageChoice(image);
-		
 		//
 		BufferedImage output = new BufferedImage(imageO.getWidth(), imageO.getHeight(), imageO.getType());
 		
@@ -95,16 +106,10 @@ private final static Scanner sc = new Scanner(System.in);
 									
 									//X coord and Y coord of pixel (add offset to match up the kernel with the pixels corresponding to the kernel's footprint)
 									//I.E. 0,0 in a 3x3 kernel is the equivalent to the current pixel value + -1,-1 (i.e. 1 step back one step up) 
-										int realX = (xCoord +  xOffset);
-										if(realX < 0) realX = (width + realX) % width;	//TODO
-										int realY = (yCoord +  yOffset);
-										if(realY < 0) realY = (height + realY) % height;	//TODO	//very basic wrapping logic
-								
+											//TODO	//very basic wrapping logic
+										int realX = (xCoord - k.getKernels().length/ 2 + xOffset + width) % width;
+										int realY = (yCoord - k.getKernels().length/ 2 + yOffset + height) % height;
 									
-									
-									//Experimental X and Y coords (Trying to get wrapping/ sampling working. Unsure how yet TODO
-									int testX = (xCoord - k.getKernels().length/2 + xOffset + width) % width;
-									int testY = (yCoord - k.getKernels().length/2 + yOffset + height) % height;
 
 									int RGB = image.getRGB((realX), (realY));	//The RGB value for the pixel, will be split out below
 									int A = (RGB >> 24) & 0xFF;	//Bitshift 24 to get alpha value 
@@ -116,25 +121,25 @@ private final static Scanner sc = new Scanner(System.in);
 									 //green +=  (G*kernel[yOffset +1][xOffset+1]);		//reverse
 									 //blue +=  (B*kernel[yOffset +1][xOffset+1]);
 									 //alpha += (A*kernel[yOffset +1][xOffset+1]);
-									 
-									 red+=  (R*k.getKernels()[yOffset + k.getKernels().length/2][xOffset +k.getKernels().length/2]);
-									 green +=  (G*k.getKernels()[yOffset+ k.getKernels().length/2][xOffset+k.getKernels().length/2]);		//reverse
-									 blue +=  (B*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2]);
-									 alpha += (A*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2]);
 									
+									
+									 red+=  (R*(k.getKernels()[yOffset + k.getKernels().length/2])[xOffset +k.getKernels().length/2] *multiFactor);
+									 green +=  (G*k.getKernels()[yOffset+ k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);		//reverse
+									 blue +=  (B*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);
+									 alpha += (A*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);
 							
 								}
 							}
 						} catch (ArrayIndexOutOfBoundsException e) {
-							continue;	//TODO
+							System.out.println("HENO");	//TODO
 						}
 						
 						//Logic here prevents pixel going over 255 or under 0 
 						//The "winner"of the max between the Colour value or 0(min pixel value) will be Math.min with 255 (the max value for a pixel)
-					outR = (int) Math.min(Math.max((red),0),255);
-					outG = (int) Math.min(Math.max((green),0),255);
-					outB = (int) Math.min(Math.max((blue),0),255);
-					outA = (int) Math.min(Math.max((alpha),0),255);
+					outR = (int) Math.min(Math.max((red+bias),0),255);
+					outG = (int) Math.min(Math.max((green+bias),0),255);
+					outB = (int) Math.min(Math.max((blue+bias),0),255);
+					outA = (int) Math.min(Math.max((alpha+bias),0),255);
 					
 					//Reassembling the separate color channels into one variable again.
 					outRGB =  outRGB |  (outA << 24);
@@ -156,7 +161,10 @@ private final static Scanner sc = new Scanner(System.in);
 		return output;
 	}//End Convolute mEthod
 
-	
+	//private static BufferedImage grayScaleConvolve(BufferedImage image) {
+	//	BufferedImage imageO = null;
+	//	return imageO;
+	//}
 	
 	
 	//Allows user to choose output RGB or GS 
@@ -228,6 +236,25 @@ private final static Scanner sc = new Scanner(System.in);
 		//return gs image
 		return image;
 	}//End method
+	public static double getBias() {
+		return bias;
+	}
+
+
+	public static void setBias(double bias) {
+		ImageProcess.bias = bias;
+	}
+
+
+	public static double getMultiFactor() {
+		return multiFactor;
+	}
+
+
+	public static void setMultiFactor(double multiFactor) {
+		ImageProcess.multiFactor = multiFactor;
+	}
+
 	
 }//End Class
 
