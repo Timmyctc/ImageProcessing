@@ -2,6 +2,8 @@ package ie.gmit.dip;
 
 import java.io.File;
 import java.util.Scanner;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class FileSearcher {
 	
@@ -42,13 +44,6 @@ public class FileSearcher {
 			return null;
 		}
 		
-		/*try {
-			File target = new File(findFile(fileName, directory));	//Delegate to findFile method for retrieval if file exists
-			return target.getAbsolutePath();
-		} catch (Exception e) {
-			
-		}
-		return null;*/
 	}// End File
 
 	public static String getOS() {
@@ -63,31 +58,15 @@ public class FileSearcher {
 		}
 		return delimiter;
 	}
-	
 
-	//Delegated Method that conducts the real retrieval of the file (Probably too much validation but better safe than sorry)
-	/*private static String findFile(String fileName, String directory) throws Exception {
-		File[] fileList = new File(directory).listFiles();
-		
-		//Iterating through files in directory to find file with same name.
-		for (int i = 0; i < fileList.length; i++) {
-			File f = fileList[i];
-			if (f.getName().equalsIgnoreCase(fileName)) {
-				System.out.println(ConsoleColour.RED);
-				System.out.println("Retrieving File...");
-				System.out.println(ConsoleColour.RESET);
-				return f.getAbsolutePath();
-			}//End IF 		
-		}//End For
-		return null;	//This will never return null due to the validation in previous method
-	}// End findFile*/
+	//using sc maybe new scanner req
+	public static URL enterFileURL() throws MalformedURLException {
+		System.out.println(ConsoleColour.BLUE);
+		//System.out.println("Enter File Name");
+		//System.out.println(ConsoleColour.RESET);
+		String urlFile = sc.nextLine().trim();
+			URL url = new URL(urlFile);
+		return url;
+	}
 }// End FileSearcher
 
-
-
-/*
---------------------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------------------
-	
-*/

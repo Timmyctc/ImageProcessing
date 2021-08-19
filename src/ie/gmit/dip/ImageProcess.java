@@ -107,8 +107,8 @@ private static Scanner sc = new Scanner(System.in);
 									//X coord and Y coord of pixel (add offset to match up the kernel with the pixels corresponding to the kernel's footprint)
 									//I.E. 0,0 in a 3x3 kernel is the equivalent to the current pixel value + -1,-1 (i.e. 1 step back one step up) 
 											//TODO	//very basic wrapping logic
-										int realX = (xCoord - k.getKernels().length/ 2 + xOffset + width) % width;
-										int realY = (yCoord - k.getKernels().length/ 2 + yOffset + height) % height;
+										int realX = (xCoord - k.getKernels().length/ 2 +xOffset+  width) % width; //TODO
+										int realY = (yCoord - k.getKernels().length/ 2 +yOffset+  height) % height;
 									
 
 									int RGB = image.getRGB((realX), (realY));	//The RGB value for the pixel, will be split out below
@@ -124,7 +124,7 @@ private static Scanner sc = new Scanner(System.in);
 									
 									
 									 red+=  (R*(k.getKernels()[yOffset + k.getKernels().length/2])[xOffset +k.getKernels().length/2] *multiFactor);
-									 green +=  (G*k.getKernels()[yOffset+ k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);		//reverse
+									 green +=  (G*k.getKernels()[yOffset+ k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);		
 									 blue +=  (B*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);
 									 alpha += (A*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);
 							
@@ -161,11 +161,6 @@ private static Scanner sc = new Scanner(System.in);
 		return output;
 	}//End Convolute mEthod
 
-	//private static BufferedImage grayScaleConvolve(BufferedImage image) {
-	//	BufferedImage imageO = null;
-	//	return imageO;
-	//}
-	
 	
 	//Allows user to choose output RGB or GS 
 	private static BufferedImage getImageChoice(BufferedImage image) {
@@ -255,16 +250,7 @@ private static Scanner sc = new Scanner(System.in);
 		ImageProcess.multiFactor = multiFactor;
 	}
 
-	
 }//End Class
 
-/*	C:\Users\timmy\Desktop 
-{
-				{-2, -2, -2, -2, -2},
-				{-2, -1, -1, -1, -2},
-				{0, 0.5, 1, 0.5, -0},
-				{2, 1, 1, 1, 2},
-				{2, 2, 2, 2, 2}
-				};
-
+/*	C:\Users\timmy\Desktop
 */

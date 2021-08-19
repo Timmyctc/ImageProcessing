@@ -127,13 +127,15 @@ public class Menu {
 					multiChoice = 0;
 					break;
 				}
-				// Does Something Eventually
+				
 				break;
 			case 5:
 				if (k != null) { // This is extra validation that is superflouous now we start with a default
 									// kernel
 					System.out.println(ConsoleColour.BLUE);
 					System.out.println("Current Kernel is " + k.toString());
+					System.out.println("Current Bias is " + ImageProcess.getBias());
+					System.out.println("Current Multiplication Factor is " + ImageProcess.getMultiFactor());
 					System.out.println(ConsoleColour.RESET);
 				} else if (k == null) {
 					System.out.println(ConsoleColour.RED);
@@ -142,11 +144,29 @@ public class Menu {
 				}
 				break;
 			case 6:
+				System.out.println(ConsoleColour.BLUE);
+				System.out.println("Enter URL to process Image from.");
+				System.out.println(ConsoleColour.RESET);
+				try {
+					BufferedImage inputURLImage = ImageIO.read(FileSearcher.enterFileURL()); // Attempt to get File
+																									// information from
+																									// user
+					ImageProcess.readImage(inputURLImage, k); // Process the URL input by the user, pass image file and
+															// kernel to use
+				} catch (Exception e) {
+					System.out.println(ConsoleColour.RED);
+					System.out.println("Problem with loading File from URL, Check URL and try again.");
+					System.out.println(ConsoleColour.RESET);
+				}
+				break;
+				
+			case 7:
 				System.out.println(ConsoleColour.RED);
 				System.out.println("Quitting"); // V straightforward, Break from loop to quit
 				System.out.println(ConsoleColour.RESET);
 				loop = false;
 				break;
+			
 			default:
 				System.out.println(ConsoleColour.RED);
 				System.out.println("Not a valid input, Select a Valid Input"); // If users input a nonvalid value,
@@ -159,15 +179,17 @@ public class Menu {
 	// Aesthetic Method to display menu options
 	private static void displayOptions() {
 		System.out.println();
+		System.out.println(ConsoleColour.WHITE_BACKGROUND_BRIGHT); //TODO
 		System.out.println(ConsoleColour.BLACK);
-		System.out.println("1) Enter Image Name"); // Ask user to specify the file to process.
+		System.out.println("1) Process Image From System"); // Ask user to specify the file to process.
 		System.out.println("2) Display Available Filters"); // List the set of filters available in the class
 															// Kernel.java
 		System.out.println("3) Select A Filter"); // Select a Filter by typing the name (Not case sensitive)
 		System.out.println("4) Change Multiplication Factor and Bias"); // Dont think this is workable (Replace with
 																		// display before/after)
-		System.out.println("5) Display Current Filter"); // Display current kernel to user
-		System.out.println("6) Quit"); // Terminate program
+		System.out.println("5) Display Current Settings"); // Display current kernel, Bias and multiplication to user
+		System.out.println("6) Process Image From URL");   //Processes an Image from a URL provided by User (not as reliable as local image)
+		System.out.println("7) Quit"); // Terminate program
 		System.out.println("\nSelect Option [1-6]>");
 		System.out.println(ConsoleColour.RESET);
 	}// end displayOptions
