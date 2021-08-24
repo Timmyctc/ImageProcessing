@@ -6,10 +6,9 @@ import java.util.EnumSet;
 import java.util.Scanner;
 import javax.imageio.ImageIO;
 
+//class holding various user I/O methods and menu display functions
 public class Menu {
 
-	// Scanner obj to be used for various user input
-	// private static Scanner menuSC = new Scanner(System.in);
 
 	// Default value for Kernel
 	public static Kernel k = Kernel.HORIZONTAL_LINES;
@@ -113,7 +112,9 @@ public class Menu {
 
 				try {
 					while (multiChoice < 1) {
-						System.out.println("Enter");
+						System.out.println(ConsoleColour.RED);
+						System.out.println("Enter a value greater than 0 please");
+						System.out.println(ConsoleColour.RESET);
 						multiChoice = biasScan.nextDouble();
 					}
 					ImageProcess.setMultiFactor(multiChoice);
@@ -158,7 +159,7 @@ public class Menu {
 					System.out.println("Problem with loading File from URL, Check URL and try again.");
 					System.out.println(ConsoleColour.RESET);
 				}
-				break;
+				break;				
 				
 			case 7:
 				System.out.println(ConsoleColour.RED);
@@ -185,8 +186,8 @@ public class Menu {
 		System.out.println("2) Display Available Filters"); // List the set of filters available in the class
 															// Kernel.java
 		System.out.println("3) Select A Filter"); // Select a Filter by typing the name (Not case sensitive)
-		System.out.println("4) Change Multiplication Factor and Bias"); // Dont think this is workable (Replace with
-																		// display before/after)
+		System.out.println("4) Change Multiplication Factor and Bias"); 
+																		 
 		System.out.println("5) Display Current Settings"); // Display current kernel, Bias and multiplication to user
 		System.out.println("6) Process Image From URL");   //Processes an Image from a URL provided by User (not as reliable as local image)
 		System.out.println("7) Quit"); // Terminate program
@@ -236,6 +237,8 @@ public class Menu {
 	}
 
 	/*
+	 * 
+	 * was rudimentary logic here to allow user to edit a blank kernel to "create" their own but was clunky and unneeded 
 	 * private static void createKernel() {
 	 * 
 	 * System.out.println(ConsoleColour.BLUE);

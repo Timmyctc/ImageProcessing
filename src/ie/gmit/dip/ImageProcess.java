@@ -29,11 +29,17 @@ private static Scanner sc = new Scanner(System.in);
 	
 	//Method to Write an Image Out
 		private static void writeImage(BufferedImage inputImage) throws IOException {
-				String outputFileName = getFileOutputName() + ".PNG";
+				//String outputFileName = getFileOutputName() + ".PNG";
 				BufferedImage outputImage = convolute(inputImage);
-			// Writing the output image
+				
+				if (secondFilterCheck()) {
+					Kernel additionalFilter = getAdditionalFilter();
+					readImage(outputImage, additionalFilter);
+				} else
+
+			// Continue Writing the output image
 			try {
-				ImageIO.write(outputImage, "PNG", new File(outputFileName));
+				ImageIO.write(outputImage, "PNG", new File(getFileOutputName() + ".png"));	//outputFileName
 			} catch (FileNotFoundException e) {
 				System.out.println(ConsoleColour.RED);
 				System.out.println("Error Writing the File\n Outputting to default directory");	
@@ -43,6 +49,55 @@ private static Scanner sc = new Scanner(System.in);
 		}// End Write Image Method
 	
 	
+		//check if user wants to add another filter
+		private static boolean secondFilterCheck() {
+			System.out.println(ConsoleColour.BLUE);
+			System.out.println("Press 1 to add another filter, 2 to continue");
+			System.out.println(ConsoleColour.RESET);
+			int choice = Integer.parseInt(sc.next());
+			if (choice == 1) {
+				return true;
+			} else
+				return false;
+		}
+
+
+		//get the secondary/tertiary filters to add by user input (this doesnt change the actual kernel we have selected 
+		//from main menu option, this is rather a temp kernel to apply on top of an existing filtered image)
+	private static Kernel getAdditionalFilter() {
+			Kernel additionalFilter = null;
+			System.out.println(ConsoleColour.BLUE);
+			Menu.kernelSet.forEach(System.out::println);
+			System.out.println(ConsoleColour.RESET);
+
+			boolean loop;
+			do {
+				System.out.println(ConsoleColour.BLUE);
+				System.out.println("Enter the name of the filter you wish to use (Not case sensitive)");
+				System.out.println(ConsoleColour.RESET);
+				String newFilter = sc.next();
+				try {
+					additionalFilter = Kernel.valueOf(newFilter.toUpperCase());// try set kernel by passing input to temp filter
+					loop = true;
+				} catch (Exception e) {
+					System.out.println(ConsoleColour.RED);
+					System.out.println("Not a Valid Filter, Try Again");
+					System.out.println(ConsoleColour.RESET);
+					loop = false;
+				}
+			} while (!loop);
+			if (loop) {
+				System.out.println(ConsoleColour.BLUE);
+				System.out.println("Confirmed: adding filter " + additionalFilter.toString()); // when the user
+																								// successfully changes
+				// kernel, output to confirm
+				System.out.println(ConsoleColour.RESET);
+				System.out.println();
+			}
+			return additionalFilter;
+		}
+
+
 	private static String getFileOutputName() throws FileNotFoundException {
 		Scanner sc1 = new Scanner(System.in);
 		System.out.println(ConsoleColour.BLUE);
@@ -64,16 +119,15 @@ private static Scanner sc = new Scanner(System.in);
 				System.out.println(ConsoleColour.RESET);
 				return outputPictureName;
 			} else {
-				return outputDirectory + delimiter + outputPictureName; // this line may cause incompatibility in linux
-																	// systems due to backslashess TODO
+				return outputDirectory + delimiter + outputPictureName; 
+																	
 			}
 
-		}
+		}//getFileOutputName
 
-	//method to convolve
+	//Method to convolute
 	private static BufferedImage convolute(BufferedImage image) {	
 		BufferedImage imageO = getImageChoice(image);
-		//
 		BufferedImage output = new BufferedImage(imageO.getWidth(), imageO.getHeight(), imageO.getType());
 		
 		
@@ -98,7 +152,7 @@ private static Scanner sc = new Scanner(System.in);
 					//The offset is added to the xCoord and yCoord to follow the footprint of the kernel
 					//The logic behind below is that all kernels are uneven numbers (so they can have a centre pixel, 3x3 5x5 etc),
 					//the offset needs to run from negative half their length (rounded down) to the positive of half their length (rounded down)
-					//This allows us to input kernels of various lengths and the calculation should not be thrown off
+					//This allows us to input kernels of various sizes (5x5, 9x9 etc) and the calculation should not be thrown off
 						try {
 							for ( int xOffset = Math.negateExact(k.getKernels().length/2); xOffset <= k.getKernels().length/2; xOffset++) {
 								for (int yOffset = Math.negateExact(k.getKernels().length/2); yOffset <= k.getKernels().length/2; yOffset++) {
@@ -107,7 +161,7 @@ private static Scanner sc = new Scanner(System.in);
 									//X coord and Y coord of pixel (add offset to match up the kernel with the pixels corresponding to the kernel's footprint)
 									//I.E. 0,0 in a 3x3 kernel is the equivalent to the current pixel value + -1,-1 (i.e. 1 step back one step up) 
 											//TODO	//very basic wrapping logic
-										int realX = (xCoord - k.getKernels().length/ 2 +xOffset+  width) % width; //TODO
+										int realX = (xCoord - k.getKernels().length/ 2 +xOffset+  width) % width; 
 										int realY = (yCoord - k.getKernels().length/ 2 +yOffset+  height) % height;
 									
 
@@ -116,13 +170,8 @@ private static Scanner sc = new Scanner(System.in);
 									int R = (RGB >> 16) & 0xFF; //Bitshift 16 to get Red Value
 									int G = (RGB >> 8) & 0xFF; //Bit Shift 8 to get Green Value
 									int B = (RGB) & 0xFF;
-									
-									 //red +=  (R*kernel[yOffset +1][xOffset+1]);
-									 //green +=  (G*kernel[yOffset +1][xOffset+1]);		//reverse
-									 //blue +=  (B*kernel[yOffset +1][xOffset+1]);
-									 //alpha += (A*kernel[yOffset +1][xOffset+1]);
-									
-									
+																	
+									//actual rgb * kernel logic 
 									 red+=  (R*(k.getKernels()[yOffset + k.getKernels().length/2])[xOffset +k.getKernels().length/2] *multiFactor);
 									 green +=  (G*k.getKernels()[yOffset+ k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);		
 									 blue +=  (B*k.getKernels()[yOffset +k.getKernels().length/2][xOffset+k.getKernels().length/2] * multiFactor);
@@ -131,7 +180,7 @@ private static Scanner sc = new Scanner(System.in);
 								}
 							}
 						} catch (ArrayIndexOutOfBoundsException e) {
-							System.out.println("HENO");	//TODO
+							System.out.println("Error");	
 						}
 						
 						//Logic here prevents pixel going over 255 or under 0 
@@ -152,7 +201,7 @@ private static Scanner sc = new Scanner(System.in);
 					//output.setRGB(xCoord, yCoord, outRGB);
 
 					//Outputting with the individual color channels
-					output.setRGB(xCoord, yCoord, new Color(outR,outG,outB).getRGB());	//TODO this one works for sure
+					output.setRGB(xCoord, yCoord, new Color(outR,outG,outB).getRGB());	//this one works for sure
 				}
 			}
 			System.out.println(ConsoleColour.RED);
@@ -231,6 +280,8 @@ private static Scanner sc = new Scanner(System.in);
 		//return gs image
 		return image;
 	}//End method
+	
+	//Bias is a value added to the individual channels, rudimentary option to brighten or darken an image
 	public static double getBias() {
 		return bias;
 	}
@@ -240,7 +291,7 @@ private static Scanner sc = new Scanner(System.in);
 		ImageProcess.bias = bias;
 	}
 
-
+	//MultiFactor multiplies each cell of the kernel to increase / decrease the kernels effect. Also affects brightness so may need to be offset with bias
 	public static double getMultiFactor() {
 		return multiFactor;
 	}

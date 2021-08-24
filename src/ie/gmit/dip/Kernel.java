@@ -3,7 +3,10 @@ package ie.gmit.dip;
 
 public enum Kernel {
 
-	IDENTITY(new double[][] { { 0, 0, 0 }, { 0, 1, 0 }, { 0, 0, 0 } }),
+	IDENTITY(new double[][] { { 0, 0, 0 },
+			{ 0, 1, 0 },
+			{ 0, 0, 0 } 
+			}),
 
 	EDGE_DETECTION_1(new double[][]  {
 			{-1, -1, -1},

@@ -5,13 +5,14 @@ import java.util.Scanner;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+//Class for searching for File based on user input (local) or user provided hyperlink (web) 
 public class FileSearcher {
 	
 	//extension default is png 
 	private final static String extension = ".png";
 	private final static Scanner sc = new Scanner(System.in);
 
-	//Public Method facilitating user input of File and Directory(Checks if they exist, delegates to FindFile method)
+	//Public Method facilitating user input of File and Directory(Checks if they exist, returns it if true)
 	public static String enterFile() throws Exception {
 		
 		
@@ -25,7 +26,7 @@ public class FileSearcher {
 		System.out.println("Enter Directory Path to Search");
 		System.out.println(ConsoleColour.RESET);
 
-		String delimiter = getOS();
+		String delimiter = getOS();					//forward slash or backslash depending on OS (understand there is a method directly for this now but decided to leave as is) 
 		String directory = sc.nextLine().trim();	//Get directory path
 		
 		String path = directory+delimiter+fileName;
@@ -59,7 +60,7 @@ public class FileSearcher {
 		return delimiter;
 	}
 
-	//using sc maybe new scanner req
+	//using sc maybe new scanner required
 	public static URL enterFileURL() throws MalformedURLException {
 		System.out.println(ConsoleColour.BLUE);
 		//System.out.println("Enter File Name");
